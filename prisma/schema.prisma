@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model User {
+  id            Int            @id @default(autoincrement())
+  name          String?
+  email         String         @unique
+  password      String         @default("")
+  role          String         @default("USER")
+  createdAt     DateTime       @default(now())
+  registrations Registration[]
+}
+
+model Event {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  department  String
+  teamSize    Int
+  date        DateTime
+  venue       String
+  rules       String
+  createdAt   DateTime @default(now())
+
+  registrations Registration[]
+}
+
+model Registration {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  eventId   Int
+  teamName  String
+  createdAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id])
+  event Event @relation(fields: [eventId], references: [id])
+
+  @@unique([userId, eventId])
+}
+
+enum Role {
+  USER
+  ADMIN
+}
