@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Event Form</title>
+  </head>
+  <body>
+    <h2>Create Event</h2>
+
+    <form id="eventForm">
+      <label>Title:</label><br />
+      <input type="text" name="title"  /><br /><br />
+
+      <label>Description:</label><br />
+      <input type="text" name="description"  /><br /><br />
+
+      <label>Department:</label><br />
+      <input type="text" name="department"  /><br /><br />
+
+      <label>Team Size:</label><br />
+      <input type="number" name="teamSize"  /><br /><br />
+
+      <label>Date & Time:</label><br />
+      <input type="datetime-local" name="date"  /><br /><br />
+
+      <label>Venue:</label><br />
+      <input type="text" name="venue"  /><br /><br />
+
+      <label>Rules:</label><br />
+      <textarea name="rules" rows="4" cols="30" ></textarea><br /><br />
+
+      <label>Event Image:</label><br />
+      <input type="file" name="image" accept="image/*"  /><br /><br />
+
+      <button type="submit">Submit</button>
+    </form>
+
+    <script>
+      const form = document.getElementById("eventForm");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+
+        const token =
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzcwMzczOTEwLCJleHAiOjE3NzA5Nzg3MTB9.j0VEDCTvNJ1MvW-JqAO4v4EPVhSMZ5UbDN2BaQf_zlw"; // 🔑 JWT token
+
+        const response = await fetch("http://localhost:3000/api/events/update/3", {
+          method: "PUT",
+          headers: {
+            Authorization: token,
+          },
+          body: formData,
+        });
+
+        const result = await response.json();
+        console.log(result);
+        // alert("Event submitted");
+      });
+    </script>
+  </body>
+</html>

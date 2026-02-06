@@ -6,7 +6,6 @@ generator client {
 datasource db {
   provider = "mysql"
 }
-
 model User {
   id            Int            @id @default(autoincrement())
   name          String?
@@ -26,6 +25,7 @@ model Event {
   date        DateTime
   venue       String
   rules       String
+  imagePath  String     @default("https://res.cloudinary.com/dqf7raj6f/image/upload/v1770367590/imageLoading_vaij1l.gif")
   createdAt   DateTime @default(now())
 
   registrations Registration[]
@@ -43,6 +43,16 @@ model Registration {
 
   @@unique([userId, eventId])
 }
+model Otp {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  name         String
+  passwordHash String
+  otpHash      String
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+}
+
 
 enum Role {
   USER

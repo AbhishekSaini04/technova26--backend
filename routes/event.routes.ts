@@ -3,16 +3,20 @@ import {
   createEvent,
   getEvents,
   updateEvent,
-  deleteEvent
+  deleteEvent,
+  getEventDetails,
+ 
 } from "../controllers/event.controller";
-import { authMiddleware } from "../middleware/auth.middleware";
-import { adminMiddleware } from "../middleware/admin.middleware";
-
+import { authMiddleware } from "../middlewares/auth.middleware";
+import { adminMiddleware } from "../middlewares/admin.middleware";
+import { upload } from "../middlewares/multer.middleware";
 const router = Router();
 
 router.get("/", getEvents);
-router.post("/", authMiddleware, adminMiddleware, createEvent);
-router.put("/:id", authMiddleware, adminMiddleware, updateEvent);
+router.get("/:id", getEventDetails);
 router.delete("/:id", authMiddleware, adminMiddleware, deleteEvent);
+router.post("/add", authMiddleware, adminMiddleware, upload.single("image"),createEvent);
+router.put("/update/:id", authMiddleware, adminMiddleware,upload.single("image"), updateEvent);
+router.delete("/delete/:id", authMiddleware, adminMiddleware, deleteEvent);
 
 export default router;
