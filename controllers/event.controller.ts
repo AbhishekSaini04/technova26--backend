@@ -10,9 +10,24 @@ export const getEventDetails = async (req: Request, res: Response) => {
 
 export const createEvent = async (req: Request, res: Response) => {
   try {
-    const { title, description, department, teamSize, date, venue, rules } =
-      req.body;
-
+    const {
+      title,
+      description,
+      department,
+      minTeamSize,
+      maxTeamSize,
+      date,
+      venue,
+      rules,
+    } = req.body;
+    if(!title || !description || !department || !minTeamSize || !maxTeamSize || !date || !venue) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
+    if (minTeamSize > maxTeamSize) {
+      return res.status(400).json({
+        error: "Minimum team size cannot be greater than maximum team size",
+      });
+    }
     const file = req.file;
 
     if (!file) {
@@ -24,7 +39,8 @@ export const createEvent = async (req: Request, res: Response) => {
         title,
         description,
         department,
-        teamSize: Number(teamSize),
+        minTeamSize: Number(minTeamSize),
+        maxTeamSize: Number(maxTeamSize),
         date: new Date(date),
         venue,
         rules,
@@ -53,24 +69,43 @@ export const updateEvent = async (req: Request, res: Response) => {
     const existingEvent = await prisma.event.findUnique({ where: { id } });
     if (!existingEvent)
       return res.status(404).json({ error: "Event not found" });
-    const title = req.body?.title? req.body.title:existingEvent.title;
-    const description = req.body?.description? req.body.description:existingEvent.description;
-    const department = req.body?.department ? req.body.department:existingEvent.department;
-    const teamSize = req.body?.teamSize !== undefined ? req.body.teamSize : existingEvent.teamSize;
+    const title = req.body?.title ? req.body.title : existingEvent.title;
+    const description = req.body?.description
+      ? req.body.description
+      : existingEvent.description;
+    const department = req.body?.department
+      ? req.body.department
+      : existingEvent.department;
+
+    const minTeamSize =
+      req.body?.minTeamSize !== undefined
+        ? req.body.minTeamSize
+        : existingEvent.minTeamSize;
+    const maxTeamSize =
+      req.body?.maxTeamSize !== undefined
+        ? req.body.maxTeamSize
+        : existingEvent.maxTeamSize;
+    if (minTeamSize > maxTeamSize) {
+      return res.status(400).json({
+        error: "Minimum team size cannot be greater than maximum team size",
+      });
+    }
     const date = req.body?.date ? new Date(req.body.date) : existingEvent.date;
     const venue = req.body?.venue ? req.body.venue : existingEvent.venue;
-    const rules = req.body?.rules !== undefined ? req.body.rules : existingEvent.rules;
+    const rules =
+      req.body?.rules !== undefined ? req.body.rules : existingEvent.rules;
     const file = req.file;
     const imagePath = file ? file.path : existingEvent.imagePath;
     // console.log("came to here");
-    
+
     const event = await prisma.event.update({
       where: { id },
       data: {
         title,
         description,
         department,
-        teamSize: Number(teamSize),
+        minTeamSize: Number(minTeamSize),
+        maxTeamSize: Number(maxTeamSize),
         date: new Date(date),
         venue,
         rules,

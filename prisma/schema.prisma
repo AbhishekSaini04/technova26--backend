@@ -6,46 +6,25 @@ generator client {
 datasource db {
   provider = "mysql"
 }
-model User {
-  id            Int            @id @default(autoincrement())
-  name          String?
-  email         String         @unique
-  password      String         @default("")
-  role          String         @default("USER")
-  createdAt     DateTime       @default(now())
-  registrations Registration[]
+
+model event {
+  id           Int            @id @default(autoincrement())
+  title        String
+  description  String
+  department   String
+  minTeamSize  Int            @default(0)
+  maxTeamSize  Int            @default(0)
+  date         DateTime
+  venue        String
+  rules        String
+  imagePath    String         @default("https://res.cloudinary.com/dqf7raj6f/image/upload/v1770367590/imageLoading_vaij1l.gif")
+  createdAt    DateTime       @default(now())
+  registration registration[]
 }
 
-model Event {
-  id          Int      @id @default(autoincrement())
-  title       String
-  description String
-  department  String
-  teamSize    Int
-  date        DateTime
-  venue       String
-  rules       String
-  imagePath  String     @default("https://res.cloudinary.com/dqf7raj6f/image/upload/v1770367590/imageLoading_vaij1l.gif")
-  createdAt   DateTime @default(now())
-
-  registrations Registration[]
-}
-
-model Registration {
-  id        Int      @id @default(autoincrement())
-  userId    Int
-  eventId   Int
-  teamName  String
-  createdAt DateTime @default(now())
-
-  user  User  @relation(fields: [userId], references: [id])
-  event Event @relation(fields: [eventId], references: [id])
-
-  @@unique([userId, eventId])
-}
-model Otp {
+model otp {
   id           Int      @id @default(autoincrement())
-  email        String   @unique
+  email        String   @unique(map: "Otp_email_key")
   name         String
   passwordHash String
   otpHash      String
@@ -53,8 +32,42 @@ model Otp {
   createdAt    DateTime @default(now())
 }
 
+model registration {
+  id         Int          @id @default(autoincrement())
+  userId     Int
+  eventId    Int
+  teamName   String
+  createdAt  DateTime     @default(now())
+  event      event        @relation(fields: [eventId], references: [id], map: "Registration_eventId_fkey")
+  user       user         @relation(fields: [userId], references: [id], map: "Registration_userId_fkey")
+  teamMember teamMember[]
 
-enum Role {
-  USER
-  ADMIN
+  @@unique([userId, eventId], map: "Registration_userId_eventId_key")
+  @@index([eventId], map: "Registration_eventId_fkey")
+}
+
+model registrationId {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+}
+
+model teamMember {
+  id             Int          @id @default(autoincrement())
+  name           String
+  mobileNumber   String
+  email          String
+  registrationId Int
+  registration   registration @relation(fields: [registrationId], references: [id], map: "TeamMember_registrationId_fkey")
+
+  @@index([registrationId], map: "TeamMember_registrationId_fkey")
+}
+
+model user {
+  id           Int            @id @default(autoincrement())
+  name         String?
+  email        String         @unique(map: "User_email_key")
+  password     String         @default("")
+  role         String         @default("USER")
+  createdAt    DateTime       @default(now())
+  registration registration[]
 }
