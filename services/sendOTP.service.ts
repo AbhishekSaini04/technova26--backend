@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
-import { transporter } from "./mailConnect.service";
+import { transporter1, transporter2} from "./mailConnect.service";
 import { otpEmailTemplate } from "../utils/otpMailTamplate.util";
 import {getMailIdCount, mailIdCounter } from "../utils/mailCounter.util";
 const mails = process.env.EMAILS?.split(",") ?? [];
+const transporter = [transporter1,transporter2];
 export const sendOTP = async ( name: string , email: string , otp: string) => {
 try {
-    const info = await transporter.sendMail({
+    const info = await transporter[getMailIdCount()].sendMail({
       from: mails[getMailIdCount()]?.trim() ?? process.env.EMAIL, // sender address
       to: email, // recipient email address
       subject: "Technova'26:OTP for Registration", // The title or subject of the email
