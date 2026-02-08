@@ -1,9 +1,8 @@
 import { Request, Response } from "express";
-import { transporter1, transporter2 } from "./mailConnect.service";
+import { transporter } from "./mailConnect.service";
 import { registrationConfirmationMail } from "../utils/registrationConfirmationMailTamplate.util";
 import { getMailIdCount, mailIdCounter } from "../utils/mailCounter.util";
 const mails = process.env.EMAILS?.split(",") ?? [];
-const transporter = [transporter1, transporter2];
 export const sendRegistrationConfirmation = async (
   name: string,
   email: string,
