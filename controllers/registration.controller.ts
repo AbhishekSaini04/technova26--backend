@@ -8,6 +8,7 @@ import jwt from "jsonwebtoken";
 //   email: string;
 //   name: string;
 // }
+import { sendRegistrationConfirmation } from "../services/sendRegistraionConfirmationMail.service";
 
 import { AuthRequest } from "../middlewares/auth.middleware";
 // interface teamMember {
@@ -18,7 +19,8 @@ import { AuthRequest } from "../middlewares/auth.middleware";
 // }
 
 export const registerEvent = async (req: AuthRequest, res: Response) => {
-  const { teamName, teamMembers } = req.body;
+  let { teamName, teamMembers } = req.body;
+  teamName = teamName ? teamName : "";
 
   const eventId = Number(req.params.id);
   const event = await prisma.event.findUnique({ where: { id: eventId } });
@@ -30,7 +32,17 @@ export const registerEvent = async (req: AuthRequest, res: Response) => {
       error: "teamMembers must be an array",
     });
   }
+  if (teamMembers.length === 0) {
+    return res.status(400).json({
+      error: "At least one team member is required",
+    });
+  }
 
+  if (teamMembers.length > 1 && teamName === "") {
+    return res.status(400).json({
+      error: "Team name is required when team members are present",
+    });
+  }
   if (
     teamMembers.length < event.minTeamSize ||
     teamMembers.length > event.maxTeamSize
@@ -117,8 +129,39 @@ export const registerEvent = async (req: AuthRequest, res: Response) => {
     //   return res.status(500).json({ error: "Failed to create team members" });
     // }
 
-    //     res.json({ message: "Registered successfully", registration, teamMembers });
-    res.json({ message: "Registered successfully", registration });
+    // res.json({ message: "Registered successfully", registration, teamMembers });
+    try {
+      const data = await prisma.registration.findUnique({
+        where: { userId_eventId: { userId: req.user!.id, eventId: eventId } },
+        include: {
+          user: true,
+          event: true,
+          teamMember: true,
+        },
+      });
+      console.log("====================================");
+      console.log(data);
+      console.log("====================================");
+      if (!data) {
+        return res.status(500).json({ error: "Failed to fetch registration" });
+      }
+    const name=data.user.name;
+    const tempTeamName=teamName!==""?teamName:name;
+      const response = await sendRegistrationConfirmation(
+        tempTeamName,
+        data.user.email,
+        data.event.title,
+        data.event.date.toString(),
+        data.event.venue,
+        data.teamMember,
+      );
+      console.log("====================================");
+      console.log(response);
+      console.log("====================================");
+      res.status(201).json({ message: "Registered successfully", data });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch registrations" });
+    }
   } catch (error) {
     console.error("Error registering for event:", error);
     res
