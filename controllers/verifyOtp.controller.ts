@@ -28,8 +28,8 @@ export const verifyOtp = async (req: Request, res: Response) => {
       name: record.name,
       email: record.email,
       password: record.passwordHash,
-      role: "USER"
-    }
+      role: "USER",
+    },
   });
 
   // Cleanup

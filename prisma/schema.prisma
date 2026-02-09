@@ -4,8 +4,9 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
 }
+
 
 model event {
   id           Int            @id @default(autoincrement())
@@ -24,7 +25,7 @@ model event {
 
 model otp {
   id           Int      @id @default(autoincrement())
-  email        String   @unique(map: "Otp_email_key")
+  email        String   @unique
   name         String
   passwordHash String
   otpHash      String
@@ -38,17 +39,13 @@ model registration {
   eventId    Int
   teamName   String
   createdAt  DateTime     @default(now())
-  event      event        @relation(fields: [eventId], references: [id], map: "Registration_eventId_fkey")
-  user       user         @relation(fields: [userId], references: [id], map: "Registration_userId_fkey")
+
+  event      event        @relation(fields: [eventId], references: [id])
+  user       user         @relation(fields: [userId], references: [id])
   teamMember teamMember[]
 
-  @@unique([userId, eventId], map: "Registration_userId_eventId_key")
-  @@index([eventId], map: "Registration_eventId_fkey")
-}
-
-model registrationId {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
+  @@unique([userId, eventId])
+  @@index([eventId])
 }
 
 model teamMember {
@@ -57,36 +54,116 @@ model teamMember {
   mobileNumber   String
   email          String
   registrationId Int
-  registration   registration @relation(fields: [registrationId], references: [id], map: "TeamMember_registrationId_fkey")
+  registration   registration @relation(fields: [registrationId], references: [id])
 
-  @@index([registrationId], map: "TeamMember_registrationId_fkey")
+  @@index([registrationId])
 }
 
 model user {
   id           Int            @id @default(autoincrement())
   name         String?
-  email        String         @unique(map: "User_email_key")
+  email        String         @unique
   password     String         @default("")
-  role         String         @default("USER")
+  role         Role           @default(USER)
   createdAt    DateTime       @default(now())
   registration registration[]
 }
 
-// model Fest {
-//   id          Int      @id
-//   name        String
-//   description String
-//   startDate   DateTime
-//   endDate     DateTime
-//   createdAt   DateTime @default(now())
-// }
-
 model department {
   id        Int      @id @default(autoincrement())
-  name      String   @unique(map: "Department_name_key")
+  name      String   @unique
   createdAt DateTime @default(now())
 }
+
 enum Role {
   USER
   ADMIN
 }
+model registrationId {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+}
+
+// model event {
+//   id           Int            @id @default(autoincrement())
+//   title        String
+//   description  String
+//   department   String
+//   minTeamSize  Int            @default(0)
+//   maxTeamSize  Int            @default(0)
+//   date         DateTime
+//   venue        String
+//   rules        String
+//   imagePath    String         @default("https://res.cloudinary.com/dqf7raj6f/image/upload/v1770367590/imageLoading_vaij1l.gif")
+//   createdAt    DateTime       @default(now())
+//   registration registration[]
+// }
+
+// model otp {
+//   id           Int      @id @default(autoincrement())
+//   email        String   @unique(map: "Otp_email_key")
+//   name         String
+//   passwordHash String
+//   otpHash      String
+//   expiresAt    DateTime
+//   createdAt    DateTime @default(now())
+// }
+
+// model registration {
+//   id         Int          @id @default(autoincrement())
+//   userId     Int
+//   eventId    Int
+//   teamName   String
+//   createdAt  DateTime     @default(now())
+//   event      event        @relation(fields: [eventId], references: [id], map: "Registration_eventId_fkey")
+//   user       user         @relation(fields: [userId], references: [id], map: "Registration_userId_fkey")
+//   teamMember teamMember[]
+
+//   @@unique([userId, eventId], map: "Registration_userId_eventId_key")
+//   @@index([eventId], map: "Registration_eventId_fkey")
+// }
+
+// model registrationId {
+//   id        Int      @id @default(autoincrement())
+//   createdAt DateTime @default(now())
+// }
+
+// model teamMember {
+//   id             Int          @id @default(autoincrement())
+//   name           String
+//   mobileNumber   String
+//   email          String
+//   registrationId Int
+//   registration   registration @relation(fields: [registrationId], references: [id], map: "TeamMember_registrationId_fkey")
+
+//   @@index([registrationId], map: "TeamMember_registrationId_fkey")
+// }
+
+// model user {
+//   id           Int            @id @default(autoincrement())
+//   name         String?
+//   email        String         @unique(map: "User_email_key")
+//   password     String         @default("")
+//   role         String         @default("USER")
+//   createdAt    DateTime       @default(now())
+//   registration registration[]
+// }
+
+// // model Fest {
+// //   id          Int      @id
+// //   name        String
+// //   description String
+// //   startDate   DateTime
+// //   endDate     DateTime
+// //   createdAt   DateTime @default(now())
+// // }
+
+// model department {
+//   id        Int      @id @default(autoincrement())
+//   name      String   @unique(map: "Department_name_key")
+//   createdAt DateTime @default(now())
+// }
+// enum Role {
+//   USER
+//   ADMIN
+// }

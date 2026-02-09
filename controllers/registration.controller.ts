@@ -145,8 +145,8 @@ export const registerEvent = async (req: AuthRequest, res: Response) => {
       if (!data) {
         return res.status(500).json({ error: "Failed to fetch registration" });
       }
-    const name=data.user.name;
-    const tempTeamName=teamName!==""?teamName:name;
+      const name = data.user.name;
+      const tempTeamName = teamName !== "" ? teamName : name;
       const response = await sendRegistrationConfirmation(
         tempTeamName,
         data.user.email,

@@ -18,11 +18,11 @@ export const addDepartment = async (req: Request, res: Response) => {
     const { name } = req.body;
     if (!name) {
       return res.status(400).json({ error: "Department name is required" });
-    }   
+    }
     const department = await prisma.department.create({
       data: {
-        name
-      }
+        name,
+      },
     });
     res.json(department);
   } catch (err) {
@@ -31,14 +31,15 @@ export const addDepartment = async (req: Request, res: Response) => {
   }
 };
 export const deleteDepartment = async (req: Request, res: Response) => {
-  try {    const { id } = req.params;
-  if (!id) {
-    return res.status(400).json({ error: "Department ID is required" });
-  }
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ error: "Department ID is required" });
+    }
     const department = await prisma.department.delete({
       where: {
-        id: Number(id)
-      }
+        id: Number(id),
+      },
     });
     res.json(department);
   } catch (err) {
@@ -50,26 +51,28 @@ export const updateDepartment = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { name } = req.body;
-   try{ const Department = await prisma.department.findUnique({
-      where: {
-        id: Number(id)
-      }
-    });
-    let upperCaseName = name.toUpperCase();
-    upperCaseName?upperCaseName:Department?.name;
-    
-    if (!id) {
-      return res.status(400).json({ error: "Department ID is required" });
-    }
-    const department = await prisma.department.update({
-      where: {
-        id: Number(id)
+    try {
+      const Department = await prisma.department.findUnique({
+        where: {
+          id: Number(id),
         },
-      data: {
-        name: upperCaseName
+      });
+      let upperCaseName = name.toUpperCase();
+      upperCaseName ? upperCaseName : Department?.name;
+
+      if (!id) {
+        return res.status(400).json({ error: "Department ID is required" });
       }
-    });
-    res.json(department);}catch(err){
+      const department = await prisma.department.update({
+        where: {
+          id: Number(id),
+        },
+        data: {
+          name: upperCaseName,
+        },
+      });
+      res.json(department);
+    } catch (err) {
       return res.status(404).json({ error: "Department not found" });
     }
   } catch (err) {

@@ -20,7 +20,15 @@ export const createEvent = async (req: Request, res: Response) => {
       venue,
       rules,
     } = req.body;
-    if(!title || !description || !department || !minTeamSize || !maxTeamSize || !date || !venue) {
+    if (
+      !title ||
+      !description ||
+      !department ||
+      !minTeamSize ||
+      !maxTeamSize ||
+      !date ||
+      !venue
+    ) {
       return res.status(400).json({ error: "All fields are required" });
     }
     if (minTeamSize > maxTeamSize) {
