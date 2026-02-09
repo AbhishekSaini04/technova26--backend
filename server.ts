@@ -12,7 +12,7 @@ dotenv.config();
 
 const app = express();
 
-const port = 3000;
+const PORT = process.env.PORT || 3010;
 app.use(cors());
 
 
@@ -42,6 +42,6 @@ app.use((req, res) => {
   res.status(404).json({ error: "Route not found" });
 });
 
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
+app.listen(PORT, () => {
+  console.log(`Server is running at http://localhost:${PORT}`);
 });
