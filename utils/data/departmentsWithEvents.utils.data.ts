@@ -52,7 +52,7 @@ export const departmentsWithEvents = [
     events: [
       "Science Quiz",
       "Magic of Chemistry",
-      "The Alchemist’s Cipher"
+      "The Alchemist's Cipher"
     ]
   },
   {

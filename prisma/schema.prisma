@@ -71,3 +71,22 @@ model user {
   createdAt    DateTime       @default(now())
   registration registration[]
 }
+
+// model Fest {
+//   id          Int      @id
+//   name        String
+//   description String
+//   startDate   DateTime
+//   endDate     DateTime
+//   createdAt   DateTime @default(now())
+// }
+
+model department {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique(map: "Department_name_key")
+  createdAt DateTime @default(now())
+}
+enum Role {
+  USER
+  ADMIN
+}

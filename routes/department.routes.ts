@@ -1,0 +1,10 @@
+import { Router } from "express";
+import { authMiddleware } from "../middlewares/auth.middleware";
+import { adminMiddleware } from "../middlewares/admin.middleware";
+const router = Router();
+import { getDepartments, addDepartment, deleteDepartment ,updateDepartment} from "../controllers/department.controller";
+router.get("/", getDepartments);
+router.post("/add", authMiddleware,adminMiddleware, addDepartment);
+router.delete("/delete/:id", authMiddleware,adminMiddleware,deleteDepartment);
+router.put("/update/:id", authMiddleware,adminMiddleware, updateDepartment);
+export default router;
