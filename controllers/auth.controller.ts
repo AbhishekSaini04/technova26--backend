@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { prisma } from "../lib/prisma";
+import prisma from "../lib/prisma";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { generateOTP } from "../services/generateO TP.service";
@@ -7,7 +7,7 @@ import { sendOTP } from "../services/sendOTP.service";
 import { log } from "node:console";
 
 export const register = async (req: Request, res: Response) => {
-  const { name, email, password } = req.body;
+ try{ const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
     return res.status(400).json({ error: "All fields are required" });
@@ -47,10 +47,15 @@ export const register = async (req: Request, res: Response) => {
   // Send OTP email
   await sendOTP(name, email, otp);
 
-  return res.json({ alert: "OTP sent to email" });
+  return res.json({ alert: "OTP sent to email" });}
+  catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 };
 
 export const login = async (req: Request, res: Response) => {
+  try {
   const { email, password } = req.body;
 
   const user = await prisma.user.findUnique({ where: { email } });
@@ -65,5 +70,9 @@ export const login = async (req: Request, res: Response) => {
     { expiresIn: "7d" },
   );
 
-  res.json({ token });
+  res.json({ token });}
+  catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 };

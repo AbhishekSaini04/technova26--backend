@@ -1,11 +1,14 @@
 import { Request, Response } from "express";
-import { prisma } from "../lib/prisma";
+import  prisma  from "../lib/prisma";
 
 export const getEventDetails = async (req: Request, res: Response) => {
-  const id = Number(req.params.id);
+ try{ const id = Number(req.params.id);
   const event = await prisma.event.findUnique({ where: { id } });
   if (!event) return res.status(404).json({ error: "Event not found" });
-  res.json(event);
+  res.json(event);} catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 };
 
 export const createEvent = async (req: Request, res: Response) => {
@@ -67,8 +70,12 @@ export const createEvent = async (req: Request, res: Response) => {
 };
 
 export const getEvents = async (_: Request, res: Response) => {
+  try {
   const events = await prisma.event.findMany();
-  res.json(events);
+  res.json(events);} catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 };
 
 export const updateEvent = async (req: Request, res: Response) => {
@@ -128,7 +135,11 @@ export const updateEvent = async (req: Request, res: Response) => {
 };
 
 export const deleteEvent = async (req: Request, res: Response) => {
-  const id = Number(req.params.id);
+try{  const id = Number(req.params.id);
   await prisma.event.delete({ where: { id } });
-  res.json({ message: "Event deleted" });
+  res.json({ message: "Event deleted" });}
+  catch (error) { 
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  } 
 };

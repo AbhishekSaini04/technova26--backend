@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import { prisma } from "../lib/prisma";
+import  prisma  from "../lib/prisma";
 import bcrypt from "bcrypt";
 import { error } from "node:console";
 
 export const verifyOtp = async (req: Request, res: Response) => {
-  const { email, otp } = req.body;
+ try{ const { email, otp } = req.body;
 
   const record = await prisma.otp.findUnique({ where: { email } });
   if (!record) {
@@ -35,5 +35,9 @@ export const verifyOtp = async (req: Request, res: Response) => {
   // Cleanup
   await prisma.otp.delete({ where: { email } });
 
-  return res.json({ message: "User registered successfully" });
+  return res.json({ message: "User registered successfully" });}
+  catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 };

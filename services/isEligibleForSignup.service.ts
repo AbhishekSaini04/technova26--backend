@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { prisma } from "../lib/prisma";
+import  prisma  from "../lib/prisma";
 import bcrypt from "bcrypt";
 import { generateOTP } from "../services/generateO TP.service";
 import { sendOTP } from "../services/sendOTP.service";
