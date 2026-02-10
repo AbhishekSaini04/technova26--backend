@@ -4,6 +4,7 @@ import { adminMiddleware } from "../middlewares/admin.middleware";
 import {registerEvent, myEvents, allRegistrations, getRegistrationsByEvent} from "../controllers/registration.controller";
 const router = Router();
 
+
 router.post("/register/:id", authMiddleware, registerEvent);
 router.get("/myEvents", authMiddleware, myEvents);
 router.get("/all", authMiddleware, adminMiddleware, allRegistrations);

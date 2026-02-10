@@ -1,0 +1,15 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const event_controller_1 = require("../controllers/event.controller");
+const auth_middleware_1 = require("../middlewares/auth.middleware");
+const admin_middleware_1 = require("../middlewares/admin.middleware");
+const multer_middleware_1 = require("../middlewares/multer.middleware");
+const router = (0, express_1.Router)();
+router.get("/", event_controller_1.getEvents);
+router.get("/:id", event_controller_1.getEventDetails);
+router.delete("/:id", auth_middleware_1.authMiddleware, admin_middleware_1.adminMiddleware, event_controller_1.deleteEvent);
+router.post("/add", auth_middleware_1.authMiddleware, admin_middleware_1.adminMiddleware, multer_middleware_1.upload.single("image"), event_controller_1.createEvent);
+router.put("/update/:id", auth_middleware_1.authMiddleware, admin_middleware_1.adminMiddleware, multer_middleware_1.upload.single("image"), event_controller_1.updateEvent);
+router.delete("/delete/:id", auth_middleware_1.authMiddleware, admin_middleware_1.adminMiddleware, event_controller_1.deleteEvent);
+exports.default = router;

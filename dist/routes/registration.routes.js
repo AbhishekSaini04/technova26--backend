@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const auth_middleware_1 = require("../middlewares/auth.middleware");
+const admin_middleware_1 = require("../middlewares/admin.middleware");
+const registration_controller_1 = require("../controllers/registration.controller");
+const router = (0, express_1.Router)();
+router.post("/register/:id", auth_middleware_1.authMiddleware, registration_controller_1.registerEvent);
+router.get("/myEvents", auth_middleware_1.authMiddleware, registration_controller_1.myEvents);
+router.get("/all", auth_middleware_1.authMiddleware, admin_middleware_1.adminMiddleware, registration_controller_1.allRegistrations);
+router.get("/event/:id", auth_middleware_1.authMiddleware, admin_middleware_1.adminMiddleware, registration_controller_1.getRegistrationsByEvent);
+exports.default = router;

@@ -1,13 +1,15 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { register, login } from "./controllers/auth.controller";
+import { signedUpUsers,register, login,  } from "./controllers/auth.controller";
 import registrationRoutes from "./routes/registration.routes";
 import { verifyOtp } from "./controllers/verifyOtp.controller";
 import eventRoutes from "./routes/event.routes";
 import { departments } from "./utils/data/departments.utils.data";
 import { departmentsWithEvents } from "./utils/data/departmentsWithEvents.utils.data";
 import { error } from "node:console";
+import { adminMiddleware, } from "./middlewares/admin.middleware";
+import { authMiddleware } from "./middlewares/auth.middleware";
 dotenv.config();
 
 const app = express();
@@ -23,6 +25,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/signup", register);
+app.get("/allSignedUpUsers" ,authMiddleware, adminMiddleware, signedUpUsers);
 app.post("/verify-otp", verifyOtp);
 app.use("/api/events", eventRoutes);
 app.use("/api/registrations", registrationRoutes);
