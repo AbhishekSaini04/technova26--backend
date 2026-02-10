@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import prisma from "../lib/prisma";
 import bcrypt from "bcrypt";
 import { error, log } from "node:console";
+import jwt from "jsonwebtoken";
 import { sendSignupConfirmationMail } from "../services/sendSignupConfirmationMail.service";
 
 export const verifyOtp = async (req: Request, res: Response) => {
@@ -41,7 +42,14 @@ export const verifyOtp = async (req: Request, res: Response) => {
       record.email,
     );
     console.log("Confirmation mail sent:", confirmationMailSend);
-    return res.json({ message: "User registered successfully" });
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) return res.status(400).json({ error: "User not found" });
+    const token = jwt.sign(
+      { id: user.id, email: user.email, name: user.name, role: user.role },
+      process.env.JWT_SECRET as string,
+      { expiresIn: "7d" },
+    );
+    return res.json({ message: "User registered successfully", token });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error" });

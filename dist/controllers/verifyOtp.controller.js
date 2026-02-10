@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.verifyOtp = void 0;
 const prisma_1 = __importDefault(require("../lib/prisma"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const sendSignupConfirmationMail_service_1 = require("../services/sendSignupConfirmationMail.service");
 const verifyOtp = async (req, res) => {
     try {
@@ -36,7 +37,11 @@ const verifyOtp = async (req, res) => {
         await prisma_1.default.otp.delete({ where: { email } });
         const confirmationMailSend = await (0, sendSignupConfirmationMail_service_1.sendSignupConfirmationMail)(record.name, record.email);
         console.log("Confirmation mail sent:", confirmationMailSend);
-        return res.json({ message: "User registered successfully" });
+        const user = await prisma_1.default.user.findUnique({ where: { email } });
+        if (!user)
+            return res.status(400).json({ error: "User not found" });
+        const token = jsonwebtoken_1.default.sign({ id: user.id, email: user.email, name: user.name, role: user.role }, process.env.JWT_SECRET, { expiresIn: "7d" });
+        return res.json({ message: "User registered successfully", token });
     }
     catch (error) {
         console.error(error);
