@@ -16,8 +16,12 @@ const admin_middleware_1 = require("./middlewares/admin.middleware");
 const auth_middleware_1 = require("./middlewares/auth.middleware");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
+app.use((0, cors_1.default)({
+    origin: "http://localhost:4000", // exact frontend origin
+    credentials: true, // allow cookies/authorization headers
+}));
 const PORT = process.env.PORT || 3010;
-app.use((0, cors_1.default)());
+// app.use(cors());
 app.use(express_1.default.json());
 app.use("/uploads", express_1.default.static("uploads"));
 app.get("/", (req, res) => {

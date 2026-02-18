@@ -13,9 +13,17 @@ import { authMiddleware } from "./middlewares/auth.middleware";
 dotenv.config();
 
 const app = express();
+app.use(cors({
+  origin: "http://localhost:5173",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true  
+}));
+
+
 
 const PORT = process.env.PORT || 3010;
-app.use(cors());
+// app.use(cors());
 
 
 app.use(express.json());
