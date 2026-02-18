@@ -172,6 +172,9 @@ export const registerEvent = async (req: AuthRequest, res: Response) => {
 
 export const myEvents = async (req: AuthRequest, res: Response) => {
   try {
+    if (!req.user) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
     const data = await prisma.registration.findMany({
       where: { userId: req.user!.id },
       include: {

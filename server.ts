@@ -35,7 +35,9 @@ app.post("/verify-otp", verifyOtp);
 app.use("/api/events", eventRoutes);
 app.use("/api/registrations", registrationRoutes);
 app.post("/login", login);
-
+app.get("/api/isadmin", authMiddleware, adminMiddleware, (req, res) => {
+  res.status(200).json({ isAdmin: true });
+});
 app.get("/api/departments", (req, res) => {
   return res.status(200).json({ departments });
 });
