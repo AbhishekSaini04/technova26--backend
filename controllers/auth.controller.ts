@@ -84,6 +84,10 @@ export const signedUpUsers = async (req: Request, res: Response) => {
       select: {
         name: true,
         email: true,
+        createdAt: true,
+      },
+       orderBy: {
+        createdAt: "desc",
       },
     });
 
