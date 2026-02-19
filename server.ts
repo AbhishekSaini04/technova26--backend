@@ -23,7 +23,7 @@ app.use(
   })
 );
 
-
+app.options("*", cors());
 const PORT = process.env.PORT || 3010;
 // app.use(cors());
 
