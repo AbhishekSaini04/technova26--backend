@@ -35,8 +35,8 @@ app.use(
   }),
 );
 
-// ⭐ important for preflight
-app.options("*", cors());
+// // ⭐ important for preflight
+// app.options("*", cors());
 
 const PORT = process.env.PORT || 3010;
 // app.use(cors());
