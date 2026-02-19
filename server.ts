@@ -1,32 +1,45 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { signedUpUsers,register, login,  } from "./controllers/auth.controller";
+import { signedUpUsers, register, login } from "./controllers/auth.controller";
 import registrationRoutes from "./routes/registration.routes";
 import { verifyOtp } from "./controllers/verifyOtp.controller";
 import eventRoutes from "./routes/event.routes";
 import { departments } from "./utils/data/departments.utils.data";
 import { departmentsWithEvents } from "./utils/data/departmentsWithEvents.utils.data";
-import { error } from "node:console";
-import { adminMiddleware, } from "./middlewares/admin.middleware";
+import { adminMiddleware } from "./middlewares/admin.middleware";
 import { authMiddleware } from "./middlewares/auth.middleware";
 dotenv.config();
 
 const app = express();
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://technova26.netlify.app",
+];
+
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://your-netlify-site.netlify.app",
-    ],
+    origin: function (origin, callback) {
+      // allow requests with no origin (mobile apps, curl, etc.)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
-  })
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
 );
 
+// ⭐ important for preflight
 app.options("*", cors());
+
 const PORT = process.env.PORT || 3010;
 // app.use(cors());
-
 
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
@@ -35,7 +48,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/signup", register);
-app.get("/allSignedUpUsers" ,authMiddleware, adminMiddleware, signedUpUsers);
+app.get("/allSignedUpUsers", authMiddleware, adminMiddleware, signedUpUsers);
 app.post("/verify-otp", verifyOtp);
 app.use("/api/events", eventRoutes);
 app.use("/api/registrations", registrationRoutes);
