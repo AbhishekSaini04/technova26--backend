@@ -13,10 +13,15 @@ import { authMiddleware } from "./middlewares/auth.middleware";
 dotenv.config();
 
 const app = express();
-app.use(cors({
-  origin: true,   
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://your-netlify-site.netlify.app",
+    ],
+    credentials: true,
+  })
+);
 
 
 const PORT = process.env.PORT || 3010;
