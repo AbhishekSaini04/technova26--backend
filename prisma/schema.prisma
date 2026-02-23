@@ -7,7 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model event {
   id           Int            @id @default(autoincrement())
   title        String
@@ -27,18 +26,38 @@ model otp {
   id           Int      @id @default(autoincrement())
   email        String   @unique
   name         String
+  rollNo       String   @default("24001001901")
+  mobile       String   @default("24001001901")
+  branch       String   @default("CSE")
+  college      String   @default("DCRUST")
+  semester     Int      @default(1)
   passwordHash String
   otpHash      String
   expiresAt    DateTime
   createdAt    DateTime @default(now())
 }
 
+model user {
+  id           Int            @id @default(autoincrement())
+  name         String?
+  email        String         @unique
+  password     String         @default("")
+  rollNo       String         @default("24001001901")
+  mobile       String         @default("24001001901")
+  branch       String         @default("CSE")
+  college      String         @default("DCRUST")
+  semester     Int            @default(1)
+  role         Role           @default(USER)
+  createdAt    DateTime       @default(now())
+  registration registration[]
+}
+
 model registration {
-  id         Int          @id @default(autoincrement())
-  userId     Int
-  eventId    Int
-  teamName   String
-  createdAt  DateTime     @default(now())
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  eventId   Int
+  teamName  String
+  createdAt DateTime @default(now())
 
   event      event        @relation(fields: [eventId], references: [id])
   user       user         @relation(fields: [userId], references: [id])
@@ -53,20 +72,15 @@ model teamMember {
   name           String
   mobileNumber   String
   email          String
+  rollNo         String       @default("24001001901")
+  mobile         String       @default("24001001901")
+  branch         String       @default("CSE")
+  college        String       @default("DCRUST")
+  semester       Int          @default(1)
   registrationId Int
   registration   registration @relation(fields: [registrationId], references: [id])
 
   @@index([registrationId])
-}
-
-model user {
-  id           Int            @id @default(autoincrement())
-  name         String?
-  email        String         @unique
-  password     String         @default("")
-  role         Role           @default(USER)
-  createdAt    DateTime       @default(now())
-  registration registration[]
 }
 
 model department {
@@ -79,6 +93,7 @@ enum Role {
   USER
   ADMIN
 }
+
 model registrationId {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())

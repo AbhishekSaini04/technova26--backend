@@ -8,9 +8,12 @@ import { log } from "node:console";
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { name, email, password } = req.body;
+    const {rollNo,mobile,branch,college,semester, name, email, password } = req.body;
+    console.log('====================================');
+    console.log(rollNo,mobile,branch,college,semester, name, email, password);
+    console.log('====================================');
 
-    if (!name || !email || !password) {
+    if (!name || !email || !password || !rollNo || !mobile || !branch || !college || !semester) {
       return res.status(400).json({ error: "All fields are required" });
     }
 
@@ -34,6 +37,11 @@ export const register = async (req: Request, res: Response) => {
         otpHash,
         passwordHash,
         name,
+        rollNo,
+        mobile,
+        branch,
+        college,
+        semester,
         expiresAt: new Date(Date.now() + 10 * 60 * 1000),
       },
       create: {
@@ -41,6 +49,11 @@ export const register = async (req: Request, res: Response) => {
         otpHash,
         passwordHash,
         name,
+        rollNo,
+        mobile,
+        branch,
+        college,
+        semester,
         expiresAt: new Date(Date.now() + 10 * 60 * 1000),
       },
     });

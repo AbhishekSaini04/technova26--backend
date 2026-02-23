@@ -24,12 +24,19 @@ export const verifyOtp = async (req: Request, res: Response) => {
     if (!isValid) {
       return res.status(400).json({ error: "Invalid OTP" });
     }
-
+console.log('====================================');
+console.log("Record", record);
+console.log('====================================');
     // Create user
     await prisma.user.create({
       data: {
         name: record.name,
         email: record.email,
+        rollNo: record.rollNo,
+        mobile: record.mobile,
+        branch: record.branch,
+        college: record.college,
+        semester: record.semester,
         password: record.passwordHash,
         role: "USER",
       },

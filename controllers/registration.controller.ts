@@ -99,6 +99,10 @@ export const registerEvent = async (req: AuthRequest, res: Response) => {
           name: m.name,
           mobileNumber: m.mobileNumber,
           email: m.email,
+          rollNo: m.rollNo || "24001001901",
+          branch: m.branch || "CSE",
+          college: m.college || "DCRUST",
+          semester: m.semester || 1,
           registrationId: registration.id,
         })),
       });
@@ -214,3 +218,18 @@ export const getRegistrationsByEvent = async (
     res.status(500).json({ error: "Failed to fetch registrations" });
   }
 };
+
+export const doIRegisteredForEvent = async (req: AuthRequest, res: Response) => {
+  const eventId = Number(req.params.id);
+  try {    const registration = await prisma.registration.findUnique({
+    where: {
+      userId_eventId: {
+        userId: req.user!.id,
+        eventId: eventId,
+      },
+    },
+  });
+  res.json({ registered: !!registration });
+} catch (error) {
+  res.status(500).json({ error: "Failed to check registration status" });
+};}
