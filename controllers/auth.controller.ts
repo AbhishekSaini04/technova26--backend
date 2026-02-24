@@ -97,6 +97,11 @@ export const signedUpUsers = async (req: Request, res: Response) => {
       select: {
         name: true,
         email: true,
+        rollNo: true,
+        mobile: true,
+        branch: true,
+        college: true,
+        semester: true,
         createdAt: true,
       },
        orderBy: {
