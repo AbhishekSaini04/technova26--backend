@@ -9,7 +9,6 @@ import jwt from "jsonwebtoken";
 //   name: string;
 // }
 import { sendRegistrationConfirmation } from "../services/sendRegistraionConfirmationMail.service";
-
 import { AuthRequest } from "../middlewares/auth.middleware";
 // interface teamMember {
 //   name: string;
@@ -17,8 +16,19 @@ import { AuthRequest } from "../middlewares/auth.middleware";
 //   mobileNumber: string;
 //   registrationId: number;
 // }
+function isAfterDeadlineIST(): boolean {
+  // Target time: 10 March 2025, 23:59 IST
+  // IST = UTC +05:30 → convert to UTC
+  const targetUTC = Date.UTC(2026, 2, 10, 18, 29, 59);
+  // Month is 0-based → March = 2
+  const nowUTC = Date.now();
+  return nowUTC >= targetUTC;
+}
 
 export const registerEvent = async (req: AuthRequest, res: Response) => {
+if (isAfterDeadlineIST()) {
+  return res.status(400).json({ error: "Registration deadline has passed" });
+}
   let { teamName, teamMembers } = req.body;
   teamName = teamName ? teamName : "";
 
@@ -54,16 +64,6 @@ export const registerEvent = async (req: AuthRequest, res: Response) => {
   const registration = await prisma.registrationId.create({
     data: {},
   });
-
-  // console.log('====================================');
-  // console.log(registration.id);
-  // console.log('====================================');
-
-  // const teamMembersWithRegistrationId = teamMembers.map((member) => ({
-  //   ...member,
-  //   registrationId,
-  // })) as teamMember[];
-
   console.log("====================================");
   console.log(teamMembers, registration.id);
   console.log("====================================");
