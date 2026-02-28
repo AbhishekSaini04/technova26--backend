@@ -21,51 +21,41 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:5173",
   "https://technova26.netlify.app",
+  "https://technovadcrust.org",
+  "https://www.technovadcrust.org",
 ];
 
-/* =====================================================
-   ✅ BULLETPROOF MANUAL CORS (handles nginx edge cases)
-===================================================== */
-app.use((req, res, next) => {
-  const origin = req.headers.origin as string | undefined;
-
-  if (origin && allowedOrigins.includes(origin)) {
-    res.header("Access-Control-Allow-Origin", origin);
-  }
-
-  res.header("Access-Control-Allow-Credentials", "true");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization",
-  );
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-
-  // ✅ handle preflight early
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
-
-  next();
-});
+// ✅ optional regex safety for www/non-www
+const allowedRegex = /^https:\/\/(www\.)?technovadcrust\.org$/;
 
 /* =====================================================
-   ✅ STANDARD CORS MIDDLEWARE (SAFE VERSION)
+   ✅ SINGLE CLEAN CORS (PRODUCTION SAFE)
 ===================================================== */
 app.use(
   cors({
     origin: function (origin, callback) {
-      // allow curl/postman/server requests
+      // allow server-to-server / postman
       if (!origin) return callback(null, true);
 
-      if (allowedOrigins.includes(origin)) {
+      if (
+        allowedOrigins.includes(origin) ||
+        allowedRegex.test(origin)
+      ) {
         return callback(null, true);
       }
 
-      // ⭐ IMPORTANT: do NOT throw error
       return callback(null, false);
     },
     credentials: true,
-  }),
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: [
+      "Origin",
+      "X-Requested-With",
+      "Content-Type",
+      "Accept",
+      "Authorization",
+    ],
+  })
 );
 
 /* =====================================================
