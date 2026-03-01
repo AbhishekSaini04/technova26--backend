@@ -23,6 +23,7 @@ const allowedOrigins = [
   "https://technova26.netlify.app",
   "https://technovadcrust.org",
   "https://www.technovadcrust.org",
+  "https://technova-2026-eight.vercel.app/"
 ];
 
 // ✅ optional regex safety for www/non-www
