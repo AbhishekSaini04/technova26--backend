@@ -17,10 +17,10 @@ import { AuthRequest } from "../middlewares/auth.middleware";
 //   registrationId: number;
 // }
 function isAfterDeadlineIST(): boolean {
-  // Target time: 10 March 2025, 23:59 IST
-  // IST = UTC +05:30 → convert to UTC
-  const targetUTC = Date.UTC(2026, 2, 10, 18, 29, 59);
-  // Month is 0-based → March = 2
+  // Target: 11 March 2026, 11:00:00 IST
+  // IST (UTC+5:30) → UTC = 05:30:00
+  const targetUTC = Date.UTC(2026, 2, 11, 5, 30, 0);
+
   const nowUTC = Date.now();
   return nowUTC >= targetUTC;
 }

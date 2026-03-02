@@ -14,7 +14,7 @@ export const sendRegistrationConfirmation = async (
   try {
     const info = await transporter[getMailIdCount()].sendMail({
       from: mails[getMailIdCount()]?.trim() ?? process.env.EMAIL, // sender address
-      to: email, 
+      to: email,
       subject: "Technova'26: Registration Confirmation", // The title or subject of the email
       html: registrationConfirmationMail({
         userName: name,
